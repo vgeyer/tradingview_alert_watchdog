@@ -51,6 +51,9 @@ The extension:
 
 ## Limitations & Requirements
 
+### Alert naming
+The alert MUST have a name, and cannot be empty. This unfortunately is a requirement.
+
 ### Language Support
 - Only supports English and German TradingView interface language
 
