@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Tradingview Alert Autorestart",
+  "version": "1.0",
+  "description": "Automatically restarts failed Tradingview alerts with exponential backoff",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "icons": {
+    "1024": "icon.png"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "host_permissions": [
+    "*://*.tradingview.com/*",
+    "*://tradingview.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
