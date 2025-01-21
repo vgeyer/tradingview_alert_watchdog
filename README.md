@@ -59,10 +59,10 @@ The extension:
 - Chrome must remain open and the computer must not go to sleep
 
 ### TradingView Session Management
-- IMPORTANT: TradingView severely limits multiple active sessions on the same account
-- When you log into TradingView on multiple devices or browsers, previous sessions often get disconnected
-- These disconnects will stop alerts from working and prevent the plugin from performing its function
-- Because of this, you MUST use this setup:
+IMPORTANT: TradingView severely limits multiple active sessions on the same account
+When you log into TradingView on multiple devices or browsers, previous sessions often get disconnected
+These disconnects will stop alerts from working and prevent the plugin from performing its function
+Because of this, you MUST use this setup:
 1. A browser with this extension and the TradingView website open and the tab beeing active(!)
 2. Use the TradingView desktop or mobile app for your regular trading activities
 3. Never log into the TradingView website on any other device or browser
