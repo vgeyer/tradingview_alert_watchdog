@@ -31,19 +31,15 @@ class AlertMonitor {
 
 
                         const alertNameElements = document.querySelectorAll('div[data-name="alert-item-name"]');
-                        console.log(`Found ${alertNameElements.length} alerts`);
-                        console.log(`Maximum retries configured: ${maxRetries}`);
 
                         alertNameElements.forEach(nameElement => {
                             const container = nameElement.parentElement;
                             if (!container) return;
 
                             const alertName = nameElement.textContent.trim();
-                            console.log(`\nProcessing: ${alertName}`);
 
                             const statusElement = container.querySelector('span[data-name="alert-item-status"]');
                             if (!statusElement) {
-                                console.log('- Status element not found');
                                 return;
                             }
 
@@ -56,14 +52,12 @@ class AlertMonitor {
                             };
 
                             if (status === 'active' || status === 'aktiv') {
-                                console.log('- Already active, skipping');
                                 retryTracking.delete(alertName);
 
                                 return;
                             }
 
                             if (status.low === 'stopped manually' || status === 'manuell beendet') {
-                                console.log('- Manually stopped, skipping');
                                 retryTracking.delete(alertName);
 
                                 return;
@@ -71,7 +65,6 @@ class AlertMonitor {
 
                             const restartButton = container.querySelector('div[data-name="alert-restart-button"]');
                             if (!restartButton) {
-                                console.log('- Restart button not found');
                                 return;
                             }
 
@@ -90,8 +83,6 @@ class AlertMonitor {
                                 tracking.retryCount++;
                                 tracking.lastAttempt = Date.now();
                                 retryTracking.set(alertName, tracking);
-                            } else {
-                                console.log(`- Waiting ${Math.ceil(waitTimeMinutes - timeSinceLastAttempt)} minutes until next retry`);
                             }
                         });
 
@@ -111,9 +102,22 @@ class AlertMonitor {
         if (this.checkInterval) clearInterval(this.checkInterval);
         this.checkInterval = setInterval(() => this.checkActiveTab(), 10000);
         console.log('Alert monitoring started');
+
+        try {
+            const intervalInMinutes = 60;
+            const milliseconds = intervalInMinutes * 60 * 1000;
+
+            this.intervalId = setInterval(() => {
+                window.location.reload();
+            }, milliseconds);
+            console.log(`Auto-reload started: page will refresh every ${intervalInMinutes} minutes`);
+        } catch (error) {
+            console.error('Failed to start auto-reload:', error);
+        }
     }
 }
 
 const monitor = new AlertMonitor();
 chrome.runtime.onInstalled.addListener(() => monitor.start());
 monitor.start();
+
