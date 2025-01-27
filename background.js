@@ -102,22 +102,30 @@ class AlertMonitor {
         if (this.checkInterval) clearInterval(this.checkInterval);
         this.checkInterval = setInterval(() => this.checkActiveTab(), 10000);
         console.log('Alert monitoring started');
+    }
 
-        try {
-            const intervalInMinutes = 60;
-            const milliseconds = intervalInMinutes * 60 * 1000;
+    reloadPage() {
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window !== 'undefined') {
+                try {
+                    const intervalInMinutes = 60;
+                    const milliseconds = intervalInMinutes * 60 * 1000;
 
-            this.intervalId = setInterval(() => {
-                window.location.reload();
-            }, milliseconds);
-            console.log(`Auto-reload started: page will refresh every ${intervalInMinutes} minutes`);
-        } catch (error) {
-            console.error('Failed to start auto-reload:', error);
-        }
+                    this.intervalId = setInterval(() => {
+                        window.location.reload();
+                    }, milliseconds);
+                    console.log(`Auto-reload started: page will refresh every ${intervalInMinutes} minutes`);
+                } catch (error) {
+                    console.error('Failed to start auto-reload:', error);
+                }
+            } else {
+                    console.error('Window undefined');
+            }
+        });
     }
 }
 
 const monitor = new AlertMonitor();
 chrome.runtime.onInstalled.addListener(() => monitor.start());
 monitor.start();
-
+monitor.reloadPage()
