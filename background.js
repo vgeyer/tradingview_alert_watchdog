@@ -136,19 +136,13 @@ class AlertMonitor {
                 args: [settings.refreshRate],
                 func: function(refreshRate) {
                     const milliseconds = refreshRate * 60 * 1000;
-
-                    console.log(milliseconds)
-                    if (typeof window !== 'undefined') {
-                        try {
-                           setInterval(() => {
-                                window.location.reload();
-                            }, milliseconds);
-                            console.log(`Auto-reload started: page will refresh in ${refreshRate} minutes`);
-                        } catch (error) {
-                            console.error('Failed to start auto-reload:', error);
-                        }
-                    } else {
-                       console.error('window undefined');
+                    try {
+                       setInterval(() => {
+                            window.location.reload();
+                        }, milliseconds);
+                        console.log(`Auto-reload started: page will refresh in ${refreshRate} minutes`);
+                    } catch (error) {
+                        console.error('Failed to start auto-reload:', error);
                     }
                 }
                 }).then(() => {
