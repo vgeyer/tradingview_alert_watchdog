@@ -11,7 +11,6 @@ class AlertMonitor {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (!tabs?.length || !tabs[0]?.url?.includes('tradingview.com')) return;
 
-
             chrome.storage.sync.get({ maxRetries: 10 }, (settings) => {
                 chrome.scripting.executeScript({
                     target: { tabId: tabs[0].id },
@@ -119,7 +118,6 @@ class AlertMonitor {
     };
 
     reloadPage() {
-
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (!tabs?.length || !tabs[0]?.url?.includes('tradingview.com')) {
                 return
@@ -127,10 +125,8 @@ class AlertMonitor {
             chrome.storage.sync.get({ refreshRate: 60 }, (settings) => {
                if (this.reloadAvisedAt != null) {
                    if (!this.olderThan(this.reloadAvisedAt, settings.refreshRate)) {
-                       console.log("reload already started")
                        return
                    } else {
-                       console.log("reset reload timer")
                        this.reloadAvisedAt = null
                    }
                }
