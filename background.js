@@ -1,12 +1,11 @@
 class AlertMonitor {
     constructor() {
-        this.checkInterval = null;
+        this.checkAlertInterval = null;
+        this.checkReloadInterval = null;
         this.retryTracking = new Map();
+        this.reloadAvisedAt = null;
     }
 
-    getWaitTimeMinutes(retryCount) {
-        return retryCount;  // 1 minute for first retry, 2 for second, etc.
-    }
 
     checkActiveTab() {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -99,28 +98,67 @@ class AlertMonitor {
     }
 
     start() {
-        if (this.checkInterval) clearInterval(this.checkInterval);
-        this.checkInterval = setInterval(() => this.checkActiveTab(), 10000);
+        if (this.checkAlertInterval) clearInterval(this.checkAlertInterval);
+        this.checkAlertInterval = setInterval(() => this.checkActiveTab(), 10000);
         console.log('Alert monitoring started');
+
+        if (this.checkReloadInterval) clearInterval(this.checkReloadInterval);
+        this.checkReloadInterval = setInterval(() => this.reloadPage(), 10000);
+        console.log('Reload ticker started');
     }
 
-    reloadPage() {
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof window !== 'undefined') {
-                try {
-                    const intervalInMinutes = 60;
-                    const milliseconds = intervalInMinutes * 60 * 1000;
+    olderThan(initialDateTime, refreshRate)  {
+        const now = new Date();
+        const timeDifference = now - initialDateTime;
+        const minutesDifference = timeDifference / 60000;
 
-                    this.intervalId = setInterval(() => {
-                        window.location.reload();
-                    }, milliseconds);
-                    console.log(`Auto-reload started: page will refresh every ${intervalInMinutes} minutes`);
-                } catch (error) {
-                    console.error('Failed to start auto-reload:', error);
-                }
-            } else {
-                    console.error('Window undefined');
+        if (minutesDifference > refreshRate) {
+            return true
+        }
+        return false
+    };
+
+    reloadPage() {
+
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            if (!tabs?.length || !tabs[0]?.url?.includes('tradingview.com')) {
+                return
             }
+            chrome.storage.sync.get({ refreshRate: 60 }, (settings) => {
+               if (this.reloadAvisedAt != null) {
+                   if (!this.olderThan(this.reloadAvisedAt, settings.refreshRate)) {
+                       console.log("reload already started")
+                       return
+                   } else {
+                       console.log("reset reload timer")
+                       this.reloadAvisedAt = null
+                   }
+               }
+
+               chrome.scripting.executeScript({
+                target: { tabId: tabs[0].id },
+                args: [settings.refreshRate],
+                func: function(refreshRate) {
+                    const milliseconds = refreshRate * 60 * 1000;
+
+                    console.log(milliseconds)
+                    if (typeof window !== 'undefined') {
+                        try {
+                           setInterval(() => {
+                                window.location.reload();
+                            }, milliseconds);
+                            console.log(`Auto-reload started: page will refresh in ${refreshRate} minutes`);
+                        } catch (error) {
+                            console.error('Failed to start auto-reload:', error);
+                        }
+                    } else {
+                       console.error('window undefined');
+                    }
+                }
+                }).then(() => {
+                    this.reloadAvisedAt = Date.now()
+                });
+            });
         });
     }
 }
@@ -128,4 +166,3 @@ class AlertMonitor {
 const monitor = new AlertMonitor();
 chrome.runtime.onInstalled.addListener(() => monitor.start());
 monitor.start();
-monitor.reloadPage()
