@@ -2,10 +2,10 @@
   "manifest_version": 3,
   "name": "Tradingview Alert Autorestart",
   "version": "1.0",
+  "author": "Victor J. C. Geyer",
   "description": "Automatically restarts failed Tradingview alerts with exponential backoff",
   "permissions": [
-    "activeTab",
-    "scripting",
+    "tabs",
     "storage"
   ],
   "icons": {
@@ -20,5 +20,12 @@
   ],
   "background": {
     "service_worker": "background.js"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.tradingview.com/*", "https://tradingview.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ]
 }

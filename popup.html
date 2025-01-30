@@ -45,11 +45,13 @@
 </div>
 <div class="config">
     <div class="form-group">
+        <label for="maxRetries">Monitor enabled:</label>
+        <input type="checkbox" id="enabled" value="0">
+    </div>
+    <div class="form-group">
         <label for="maxRetries">Maximum Retries:</label>
         <input type="number" id="maxRetries" min="1" max="20" value="10">
     </div>
-</div>
-<div class="config">
     <div class="form-group">
         <label for="refreshRate">Autoreload Page in Minutes (0 for disable):</label>
         <input type="number" id="refreshRate" min="0" max="240" value="60">
