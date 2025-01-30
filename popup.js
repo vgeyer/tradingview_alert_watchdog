@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
         refreshRateInput.value = items.refreshRate;
     });
     chrome.storage.sync.get({ enabled: true }, function(items) {
-        enabledInput.value = items.refreshRate;
+        enabledInput.value = items.enabled;
     });
 
     maxRetriesInput.addEventListener('change', function() {
