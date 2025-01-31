@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const maxRetriesInput = document.getElementById('maxRetries');
     const refreshRateInput = document.getElementById('refreshRate');
-    const enabledInput = document.getElementById('enabled');
+    const enabledInput = document.getElementById('pluginEnabled');
     const saveStatus = document.getElementById('saveStatus');
 
     chrome.storage.sync.get({ maxRetries: 10 }, function(items) {
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
         refreshRateInput.value = items.refreshRate;
     });
     chrome.storage.sync.get({ enabled: true }, function(items) {
-        enabledInput.value = items.enabled;
+        enabledInput.checked = items.enabled;
     });
 
     maxRetriesInput.addEventListener('change', function() {
@@ -48,8 +48,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     enabledInput.addEventListener('change', function() {
+        const checked = this.checked
         chrome.storage.sync.set({
-            enabled: this.checked
+            enabled: checked
         }, function() {
             saveStatus.innerText = "Page will reload for changes to take effect."
             saveStatus.style.display = 'block';
